@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Users, Shield, Handshake, Hand } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ContactForm from "@/components/ContactForm"; // ✅ corrected default import
+import ContactForm from "@/components/ContactForm";
 import { PayPalDonationForm } from "@/components/PayPalDonationForm";
 
-export const DonatePage = () => {
+const DonatePage = () => {
   const [activeForm, setActiveForm] = useState<"donate" | "volunteer" | "corporate">("donate");
 
   const bankDetails = {
@@ -14,7 +14,7 @@ export const DonatePage = () => {
     beneficiaryName: "Hands On Unemployment Uganda",
     accountNumber: "3204762297",
     bankBranch: "Centenary Kamuli Branch",
-    intermediaryBank: "Citi Bank N.A, New York",
+    intermediaryBank: "Citi Bank ",
     intermediarySwift: "CITIUS33",
     intermediaryAccount: "36022172"
   };
@@ -86,3 +86,5 @@ export const DonatePage = () => {
     </div>
   );
 };
+
+export default DonatePage; // ✅ This line fixes the Netlify error

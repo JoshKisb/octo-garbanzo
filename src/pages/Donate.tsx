@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import { Link } from "react-router-dom"; 
 import { PayPalDonationForm } from "@/components/PayPalDonationForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Users, Shield, ChevronDown, ChevronUp } from "lucide-react";
@@ -65,75 +66,68 @@ const Donate = () => {
           </div>
         </div>
 
-        {/* Bank Transfer Dropdown */}
-        <div className="max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-houg-primary text-center">Bank Transfer</h2>
-          <div className="text-center mb-4">
-            <button
-              onClick={() => setShowBankDetails(!showBankDetails)}
-              className="inline-flex items-center px-4 py-2 border border-houg-primary rounded-md text-houg-primary hover:bg-houg-primary hover:text-white transition"
-            >
-              {showBankDetails ? "Hide Bank Details" : "Show Bank Details"}
-              {showBankDetails ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
-            </button>
-          </div>
-
-          {showBankDetails && (
-            <div className="bg-white shadow-md rounded-lg p-6 space-y-3 text-sm">
-              <div className="flex justify-between"><span className="font-semibold">Bank Name:</span> <span>Centenary Rural Development Bank Limited</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Bank SWIFT Code:</span> <span>CERBUGKA</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Beneficiary Name:</span> <span>Hands On Unemployment Uganda</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Account Number:</span> <span>3204762297</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Bank Branch:</span> <span>Centenary Kamuli Branch</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Intermediary Bank:</span> <span>Citi Bank N.A, New York</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Intermediary SWIFT:</span> <span>CITIUS33</span></div>
-              <div className="flex justify-between"><span className="font-semibold">Intermediary Account:</span> <span>36022172</span></div>
-            </div>
-          )}
-        </div>
+       
 
         {/* Other Ways to Support */}
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-houg-primary text-center">Other Ways to Support</h2>
+    
+<div className="max-w-4xl mx-auto">
+  <h2 className="text-3xl font-bold mb-8 text-houg-primary text-center">Other Ways to Support</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="shadow-md border-houg-secondary/20">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Volunteer With Us</h3>
-                <p className="mb-4">
-                  Share your skills and time by volunteering with our projects in Uganda. We welcome both local and international volunteers.
-                </p>
-                <a href="/contact" className="text-houg-primary font-medium hover:underline">
-                  Learn More
-                </a>
-              </CardContent>
-            </Card>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <Card className="shadow-md border-houg-secondary/20">
+      <CardContent className="p-6">
+        <h3 className="text-xl font-semibold mb-4">Volunteer With Us</h3>
+        <p className="mb-4">
+          Share your skills and time by volunteering with our projects in Uganda. We welcome both local and international volunteers.
+        </p>
+        <Link to="/contact" className="text-houg-primary font-medium hover:underline">
+          Learn More
+        </Link>
+      </CardContent>
+    </Card>
 
-            <Card className="shadow-md border-houg-secondary/20">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Corporate Partnerships</h3>
-                <p className="mb-4">
-                  Partner with us to create joint initiatives that align with your corporate social responsibility goals.
-                </p>
-                <a href="/contact" className="text-houg-primary font-medium hover:underline">
-                  Contact Us
-                </a>
-              </CardContent>
-            </Card>
+    <Card className="shadow-md border-houg-secondary/20">
+      <CardContent className="p-6">
+        <h3 className="text-xl font-semibold mb-4">Corporate Partnerships</h3>
+        <p className="mb-4">
+          Partner with us to create joint initiatives that align with your corporate social responsibility goals.
+        </p>
+        <Link to="/contact" className="text-houg-primary font-medium hover:underline">
+          Contact Us
+        </Link>
+      </CardContent>
+    </Card>
 
-            <Card className="shadow-md border-houg-secondary/20">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Make a Bank Transfer</h3>
-                <p className="mb-4">
-                  You can donate directly via bank transfer. Click the button above to view the full banking details.
-                </p>
-                <a href="#bank-transfer" className="text-houg-primary font-medium hover:underline">
-                  Show Bank Details
-                </a>
-              </CardContent>
-            </Card>
+    <Card className="shadow-md border-houg-secondary/20">
+      <CardContent className="p-6">
+        <h3 className="text-xl font-semibold mb-4">Bank Transfer</h3>
+        <p className="mb-4">
+          Make a direct bank transfer to our Uganda account.
+        </p>
+        <button
+          onClick={() => setShowBankDetails(!showBankDetails)}
+          className="text-houg-primary font-medium hover:underline focus:outline-none"
+        >
+          {showBankDetails ? "Hide Bank Details" : "Get Bank Details"}
+        </button>
+
+        {showBankDetails && (
+          <div className="mt-4 space-y-2 text-sm">
+            <p><strong>Bank Name:</strong> Centenary Rural Development Bank Limited</p>
+            <p><strong>SWIFT Code:</strong> CERBUGKA</p>
+            <p><strong>Beneficiary Name:</strong> Hands On Unemployment Uganda</p>
+            <p><strong>Account Number:</strong> 3204762297</p>
+            <p><strong>Branch:</strong> Centenary Kamuli Branch</p>
+            <p><strong>Intermediary Bank:</strong> Citi Bank N.A, New York</p>
+            <p><strong>Intermediary SWIFT:</strong> CITIUS33</p>
+            <p><strong>Intermediary Account:</strong> 36022172</p>
           </div>
-        </div>
+        )}
+      </CardContent>
+    </Card>
+  </div>
+</div>
+
       </div>
 
       <Footer />

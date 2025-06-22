@@ -67,4 +67,5 @@ export function PayPalDonationForm() {
       </CardContent>
     </Card>
   );
-}
+} 
+export default PayPalDonationForm;

@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
 import { Link } from "react-router-dom"; 
-import { PayPalDonationForm } from "@/components/PayPalDonationForm";
+import  PayPalDonationForm  from "@/components/PayPalDonationForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Users, Shield, ChevronDown, ChevronUp } from "lucide-react";
 

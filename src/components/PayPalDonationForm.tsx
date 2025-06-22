@@ -3,69 +3,140 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, CreditCard } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import type { CreateOrderActions, OnApproveData, OnApproveActions } from "@paypal/paypal-js";
 
-export function PayPalDonationForm() {
+const PayPalDonationForm = () => {
   const { toast } = useToast();
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [customAmount, setCustomAmount] = useState("");
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(10);
+  const [customAmount, setCustomAmount] = useState("10");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [donationType, setDonationType] = useState("one-time");
   const [showPayment, setShowPayment] = useState(false);
 
   const presetAmounts = [10, 25, 50, 100, 250, 500];
 
-  const handlePresetAmountClick = (amount: number) => {
-    setSelectedAmount(amount);
-    setCustomAmount(amount.toString());
+  // CORRECT PayPal configuration using EXACT property names
+  const paypalOptions = {
+    clientId: "ATq4uG9U4XwQZJm5q7Jv6q9qXq1XQZJm5q7Jv6q9qXq1XQZJm5q7Jv6q9qXq1XQZJm", // Sandbox ID
+    currency: "USD",
+    intent: "capture",
+    components: "buttons",
   };
 
-  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === "" || /^\d+(\.\d{0,2})?$/.test(value)) {
-      setCustomAmount(value);
-      setSelectedAmount(null);
-    }
-  };
-
-  const handleContinueToPayment = () => {
-    if (!customAmount || parseFloat(customAmount) <= 0) {
+  const handleContinue = () => {
+    const amount = parseFloat(customAmount);
+    if (isNaN(amount) || amount <= 0) {
       toast({
-        title: "Error",
-        description: "Please enter a valid donation amount.",
-        variant: "destructive",
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
       });
       return;
     }
-
-    if (!name || !email) {
+    if (!name.trim() || !email.trim()) {
       toast({
-        title: "Error",
-        description: "Please provide your name and email.",
-        variant: "destructive",
+        title: "Missing Information",
+        description: "Please fill all fields",
       });
       return;
     }
-
     setShowPayment(true);
   };
 
-  const handlePayPalPayment = () => {
-    window.open(
-      `https://www.paypal.com/donate?hosted_button_id=YOUR_BUTTON_ID&amount=${customAmount}`,
-      "_blank"
-    );
+  const createOrder = (data: unknown, actions: CreateOrderActions) => {
+    return actions.order.create({
+      intent: "CAPTURE",
+      purchase_units: [{
+        amount: {
+          currency_code: "USD",
+          value: customAmount
+        }
+      }]
+    });
+  };
+
+  const onApprove = (data: OnApproveData, actions: OnApproveActions) => {
+    return actions.order!.capture().then(() => {
+      toast({
+        title: "Thank You!",
+        description: `Your donation of $${customAmount} was successful!`,
+      });
+    });
   };
 
   return (
     <Card className="shadow-lg border-houg-secondary/20">
-      <CardContent className="pt-6">
-        {/* ... (same PayPal form as before) ... */}
+      <CardContent className="p-6">
+        {!showPayment ? (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Select Donation Amount</h3>
+            <div className="flex flex-wrap gap-2">
+              {presetAmounts.map((amount) => (
+                <Button
+                  key={amount}
+                  variant={selectedAmount === amount ? "default" : "outline"}
+                  onClick={() => {
+                    setSelectedAmount(amount);
+                    setCustomAmount(amount.toString());
+                  }}
+                >
+                  ${amount}
+                </Button>
+              ))}
+            </div>
+            <Input
+              placeholder="Custom Amount ($)"
+              type="number"
+              min="1"
+              step="0.01"
+              value={customAmount}
+              onChange={(e) => {
+                setCustomAmount(e.target.value);
+                setSelectedAmount(null);
+              }}
+            />
+            <Input
+              placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <Input
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Button onClick={handleContinue} className="w-full">
+              Continue to Payment
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Complete Your Donation</h3>
+            <p className="text-sm text-muted-foreground">
+              Donating <strong>${customAmount}</strong> as {name}
+            </p>
+
+            <PayPalScriptProvider options={paypalOptions}>
+              <PayPalButtons
+                style={{ layout: "vertical" }}
+                createOrder={createOrder}
+                onApprove={onApprove}
+                onError={(err) => {
+                  toast({
+                    title: "Payment Error",
+                    description: err instanceof Error ? err.message : String(err),
+                  });
+                }}
+              />
+            </PayPalScriptProvider>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
-} 
+};
+
 export default PayPalDonationForm;

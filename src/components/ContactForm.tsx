@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { Mail } from "lucide-react";
 
 const ContactForm = () => {
   const { toast } = useToast();
@@ -12,60 +13,61 @@ const ContactForm = () => {
     subject: "",
     message: ""
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Simple validation
+    // Validate required fields
     if (!formData.name || !formData.email || !formData.message) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
         variant: "destructive",
       });
-      setIsSubmitting(false);
       return;
     }
 
-    // Solution 1: Direct email approach (no backend needed)
-    const mailtoLink = `mailto:houuganda@gmail.com?subject=${
-      encodeURIComponent(formData.subject || "Contact Form Submission")
-    }&body=${
-      encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-      )
-    }`;
+    // Create mailto link
+    const subject = formData.subject || "Contact Form Submission";
+    const body = `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`;
+    const mailtoLink = `mailto:houuganda@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // Try to open email client
-    window.location.href = mailtoLink;
+    // Method 1: Try hidden link click (works in most browsers)
+    const link = document.createElement('a');
+    link.href = mailtoLink;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    // Fallback if email client doesn't open
+    // Method 2: Fallback instructions
     setTimeout(() => {
-      if (!document.hidden) {
-        toast({
-          title: "Email client didn't open?",
-          description: (
-            <div>
-              <p>You can email us directly at:</p>
-              <a 
-                href="mailto:houuganda@gmail.com" 
-                className="font-bold underline"
-              >
-                houuganda@gmail.com
-              </a>
+      toast({
+        title: "Email Instructions",
+        description: (
+          <div className="space-y-2">
+            <p>If your email client didn't open:</p>
+            <div className="bg-gray-100 p-3 rounded-md">
+              <p className="font-semibold">To: houuganda@gmail.com</p>
+              <p className="font-semibold">Subject: {subject}</p>
+              <p className="whitespace-pre-line mt-2">{body}</p>
             </div>
-          ),
-          duration: 10000,
-        });
-      }
-    }, 3000);
+            <Button asChild variant="outline" className="mt-2">
+              <a href={mailtoLink}>
+                <Mail className="mr-2 h-4 w-4" />
+                Try Opening Email Again
+              </a>
+            </Button>
+          </div>
+        ),
+        duration: 20000,
+      });
+    }, 1000);
 
     // Reset form
     setFormData({
@@ -74,11 +76,10 @@ const ContactForm = () => {
       subject: "",
       message: ""
     });
-    setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium mb-1">
@@ -140,21 +141,10 @@ const ContactForm = () => {
       
       <Button 
         type="submit" 
-        disabled={isSubmitting}
         className="bg-houg-primary hover:bg-houg-secondary w-full"
       >
-        {isSubmitting ? "Preparing message..." : "Send Message"}
+        Send Message
       </Button>
-      
-      <p className="text-sm text-gray-600 mt-2">
-        This will open your email client. If it doesn't work, please email us directly at{" "}
-        <a 
-          href="mailto:houuganda@gmail.com" 
-          className="text-houg-primary hover:underline font-medium"
-        >
-          houuganda@gmail.com
-        </a>
-      </p>
     </form>
   );
 };

@@ -50,7 +50,7 @@ const OurStory = () => {
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <h2 className="text-3xl font-bold text-houg-primary mb-6">Hello to the World</h2>
             <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              It's a lovely Sunday here and HOUU Uganda sends you warm greetings and regards. It's always very hard and quite challenging when nature defies the odds leaving us with no viable options/solutions to such unprecedented critical moments. We convey our dear sympathies to everyone going through hard-times as a result of nature defying the odds ending up causing global catastrophes.
+              It's a lovely day here and HOUU Uganda sends you warm greetings and regards. It's always very hard and quite challenging when nature defies the odds leaving us with no viable options/solutions to such unprecedented critical moments. We convey our dear sympathies to everyone going through hard-times as a result of nature defying the odds ending up causing global catastrophes.
             </p>
             <p className="text-lg text-gray-700 leading-relaxed">
               My name is Peter, a passionate environmental advocate from the heart of Uganda's Kamuli District. I am the founder and lead visionary of HOUU "Hands On Unemployment Uganda."

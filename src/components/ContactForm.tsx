@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,59 +6,79 @@ import { useToast } from "@/components/ui/use-toast";
 
 const ContactForm = () => {
   const { toast } = useToast();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!name || !email || !message) {
+    setIsSubmitting(true);
+
+    // Simple validation
+    if (!formData.name || !formData.email || !formData.message) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields.",
+        title: "Missing Information",
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
+      setIsSubmitting(false);
       return;
     }
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Create mailto link for now - in production you'd integrate with a backend service
-      const mailtoLink = `mailto:houuganda@gmail.com?subject=${encodeURIComponent(subject || 'Contact Form Submission')}&body=${encodeURIComponent(
-        `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
-      )}`;
-      
-      // Open default email client
-      window.location.href = mailtoLink;
-      
-      toast({
-        title: "Email Client Opened",
-        description: "Your default email client should open with the message pre-filled. Please send it to complete your inquiry.",
-      });
-      
-      // Reset form
-      setName("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
-      
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "There was an issue processing your request. Please try again or contact us directly at houuganda@gmail.com",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+
+    // Solution 1: Direct email approach (no backend needed)
+    const mailtoLink = `mailto:houuganda@gmail.com?subject=${
+      encodeURIComponent(formData.subject || "Contact Form Submission")
+    }&body=${
+      encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+      )
+    }`;
+
+    // Try to open email client
+    window.location.href = mailtoLink;
+
+    // Fallback if email client doesn't open
+    setTimeout(() => {
+      if (!document.hidden) {
+        toast({
+          title: "Email client didn't open?",
+          description: (
+            <div>
+              <p>You can email us directly at:</p>
+              <a 
+                href="mailto:houuganda@gmail.com" 
+                className="font-bold underline"
+              >
+                houuganda@gmail.com
+              </a>
+            </div>
+          ),
+          duration: 10000,
+        });
+      }
+    }, 3000);
+
+    // Reset form
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: ""
+    });
+    setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleFormSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium mb-1">
@@ -67,8 +86,9 @@ const ContactForm = () => {
           </label>
           <Input
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
             placeholder="John Doe"
             required
           />
@@ -81,8 +101,9 @@ const ContactForm = () => {
           <Input
             id="email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="john@example.com"
             required
           />
@@ -95,8 +116,9 @@ const ContactForm = () => {
         </label>
         <Input
           id="subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
           placeholder="How can we help you?"
         />
       </div>
@@ -107,8 +129,9 @@ const ContactForm = () => {
         </label>
         <Textarea
           id="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
           placeholder="Your message here..."
           rows={6}
           required
@@ -118,14 +141,17 @@ const ContactForm = () => {
       <Button 
         type="submit" 
         disabled={isSubmitting}
-        className="bg-houg-primary hover:bg-houg-secondary"
+        className="bg-houg-primary hover:bg-houg-secondary w-full"
       >
-        {isSubmitting ? "Processing..." : "Send Message"}
+        {isSubmitting ? "Preparing message..." : "Send Message"}
       </Button>
       
       <p className="text-sm text-gray-600 mt-2">
-        Note: This will open your default email client. For best results, you can also email us directly at{" "}
-        <a href="mailto:houuganda@gmail.com" className="text-houg-primary hover:underline">
+        This will open your email client. If it doesn't work, please email us directly at{" "}
+        <a 
+          href="mailto:houuganda@gmail.com" 
+          className="text-houg-primary hover:underline font-medium"
+        >
           houuganda@gmail.com
         </a>
       </p>

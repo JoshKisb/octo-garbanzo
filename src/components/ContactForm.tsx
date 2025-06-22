@@ -9,7 +9,7 @@ interface ContactFormProps {
   initialSubject?: string;
 }
 
-export function ContactForm({ initialSubject = "" }: ContactFormProps) {
+const ContactForm = ({ initialSubject = "" }: ContactFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -43,14 +43,14 @@ export function ContactForm({ initialSubject = "" }: ContactFormProps) {
     const mailtoLink = `mailto:houuganda@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     window.location.href = mailtoLink;
-    
-    const link = document.createElement('a');
+
+    const link = document.createElement("a");
     link.href = mailtoLink;
-    link.style.display = 'none';
+    link.style.display = "none";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     setTimeout(() => {
       toast({
         title: "Email Instructions",
@@ -66,7 +66,7 @@ export function ContactForm({ initialSubject = "" }: ContactFormProps) {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => copyToClipboard(`houuganda@gmail.com`)}
+                onClick={() => copyToClipboard("houuganda@gmail.com")}
               >
                 <Copy className="mr-2 h-4 w-4" />
                 Copy Email
@@ -96,7 +96,59 @@ export function ContactForm({ initialSubject = "" }: ContactFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* ... (same form fields as before) ... */}
+      <div>
+        <label htmlFor="name" className="block mb-1 font-medium">Name</label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="Your name"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="email" className="block mb-1 font-medium">Email</label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="you@example.com"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="subject" className="block mb-1 font-medium">Subject</label>
+        <Input
+          id="subject"
+          type="text"
+          placeholder="Subject"
+          value={formData.subject}
+          onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="message" className="block mb-1 font-medium">Message</label>
+        <Textarea
+          id="message"
+          placeholder="Write your message here..."
+          rows={5}
+          value={formData.message}
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          required
+        />
+      </div>
+
+      <Button type="submit" className="w-full">
+        <Mail className="mr-2 h-4 w-4" />
+        Send Message
+      </Button>
     </form>
   );
-}
+};
+
+export default ContactForm;

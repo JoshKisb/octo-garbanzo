@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Users, Shield, Handshake, Hand } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ContactForm } from "@/components/ContactForm";
+import ContactForm from "@/components/ContactForm"; // ✅ corrected default import
 import { PayPalDonationForm } from "@/components/PayPalDonationForm";
 
 export const DonatePage = () => {
